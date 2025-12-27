@@ -8,7 +8,7 @@ services:
       PGDATA: /data/postgres
       POSTGRES_DB: ${POSTGRES_DB:-ticket}
     volumes:
-       - postgres:/data/postgres
+       - postgres:/data/postgres-ticket
     ports:
       - "5432:5432"
     networks:
@@ -23,7 +23,7 @@ services:
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
       PGADMIN_CONFIG_SERVER_MODE: 'False'
     volumes:
-       - pgadmin:/var/lib/pgadmin
+       - pgadmin:/var/lib/pgadmin-ticket
 
     ports:
       - "${PGADMIN_PORT:-5050}:80"
