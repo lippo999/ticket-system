@@ -7,144 +7,104 @@
 SET search_path TO auth_schema;
 
 -- =====================================================================
--- 1. Insert Permissions
+-- 1. Insert Permissions (5 permissions cơ bản)
 -- =====================================================================
 
 INSERT INTO auth_schema.permissions (name, description, created_at, updated_at) 
 VALUES 
-    ('USER_READ', 'Read user information', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('USER_CREATE', 'Create new users', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('USER_UPDATE', 'Update existing users', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('USER_DELETE', 'Delete users', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    
-    ('ROLE_READ', 'Read role information', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('ROLE_CREATE', 'Create new roles', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('ROLE_UPDATE', 'Update existing roles', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('ROLE_DELETE', 'Delete roles', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    
-    ('PERMISSION_READ', 'Read permission information', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('PERMISSION_CREATE', 'Create new permissions', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('PERMISSION_UPDATE', 'Update existing permissions', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('PERMISSION_DELETE', 'Delete permissions', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    
-    ('EVENT_READ', 'Read event information', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('EVENT_CREATE', 'Create new events', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('EVENT_UPDATE', 'Update existing events', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('EVENT_DELETE', 'Delete events', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    
-    ('BOOKING_READ', 'Read booking information', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('BOOKING_CREATE', 'Create new bookings', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('BOOKING_UPDATE', 'Update existing bookings', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('BOOKING_DELETE', 'Delete bookings', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    
-    ('PAYMENT_READ', 'Read payment information', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('PAYMENT_CREATE', 'Process payments', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('PAYMENT_UPDATE', 'Update payment status', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('PAYMENT_DELETE', 'Delete payments', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+    ('USER_MANAGE', 'Manage users (create, read, update, delete)', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('EVENT_MANAGE', 'Manage events (create, read, update, delete)', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('BOOKING_MANAGE', 'Manage bookings (create, read, update, delete)', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('PAYMENT_MANAGE', 'Manage payments (process, refund, view)', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('SYSTEM_CONFIG', 'Configure system settings and roles', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ON CONFLICT (name) DO NOTHING;
 
 -- =====================================================================
--- 2. Insert Roles
+-- 2. Insert Roles (2 roles: SUPER_ADMIN, USER)
 -- =====================================================================
 
 INSERT INTO auth_schema.roles (name, description, created_at, updated_at)
 VALUES
-    ('ADMIN', 'Administrator with full access', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('USER', 'Regular user with basic access', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('EVENT_MANAGER', 'Manage events and view bookings', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('BOOKING_MANAGER', 'Manage bookings and payments', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+    ('SUPER_ADMIN', 'Super administrator with all permissions', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('USER', 'Regular user - can book events and view own data', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ON CONFLICT (name) DO NOTHING;
 
 -- =====================================================================
--- 3. Insert Users (password: admin123 đã được BCrypt encode)
+-- 3. Insert Users
 -- =====================================================================
 
 -- Password: admin123 (BCrypt với strength=10)
--- Bạn có thể generate BCrypt password tại: https://bcrypt-generator.com/
-INSERT INTO auth_schema.users (username, email, password, full_name, enabled, created_at, updated_at)
+-- Generate tại: https://bcrypt-generator.com/
+INSERT INTO auth_schema.users (username, email, password, full_name, role_id, enabled, created_at, updated_at)
 VALUES
-    ('admin', 'admin@ticketflow.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'System Administrator', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+    ('superadmin', 'admin@ticketflow.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Super Administrator', 
+     (SELECT id FROM auth_schema.roles WHERE name = 'SUPER_ADMIN'), 
+     true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    
+    ('testuser', 'user@ticketflow.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Test User', 
+     (SELECT id FROM auth_schema.roles WHERE name = 'USER'), 
+     true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ON CONFLICT (username) DO NOTHING;
 
 -- =====================================================================
 -- 4. Assign Permissions to Roles
 -- =====================================================================
 
--- ADMIN role - ALL permissions
+-- SUPER_ADMIN role - ALL permissions
 INSERT INTO auth_schema.role_permissions (role_id, permission_id)
 SELECT r.id, p.id
 FROM auth_schema.roles r
 CROSS JOIN auth_schema.permissions p
-WHERE r.name = 'ADMIN'
+WHERE r.name = 'SUPER_ADMIN'
 ON CONFLICT DO NOTHING;
 
--- USER role - Read permissions + booking create/update
+-- USER role - Only BOOKING_MANAGE (can create/view own bookings)
 INSERT INTO auth_schema.role_permissions (role_id, permission_id)
 SELECT r.id, p.id
 FROM auth_schema.roles r, auth_schema.permissions p
-WHERE r.name = 'USER'
-  AND (p.name LIKE '%_READ' OR p.name IN ('BOOKING_CREATE', 'BOOKING_UPDATE'))
-ON CONFLICT DO NOTHING;
-
--- EVENT_MANAGER role - All event permissions + booking/payment read
-INSERT INTO auth_schema.role_permissions (role_id, permission_id)
-SELECT r.id, p.id
-FROM auth_schema.roles r, auth_schema.permissions p
-WHERE r.name = 'EVENT_MANAGER'
-  AND (p.name LIKE 'EVENT_%' OR p.name IN ('BOOKING_READ', 'PAYMENT_READ'))
-ON CONFLICT DO NOTHING;
-
--- BOOKING_MANAGER role - All booking and payment permissions + event read
-INSERT INTO auth_schema.role_permissions (role_id, permission_id)
-SELECT r.id, p.id
-FROM auth_schema.roles r, auth_schema.permissions p
-WHERE r.name = 'BOOKING_MANAGER'
-  AND (p.name LIKE 'BOOKING_%' OR p.name LIKE 'PAYMENT_%' OR p.name = 'EVENT_READ')
-ON CONFLICT DO NOTHING;
-
--- =====================================================================
--- 5. Assign Roles to Users
--- =====================================================================
-
--- Assign ADMIN role to admin user
-INSERT INTO auth_schema.user_roles (user_id, role_id)
-SELECT u.id, r.id
-FROM auth_schema.users u, auth_schema.roles r
-WHERE u.username = 'admin' AND r.name = 'ADMIN'
+WHERE r.name = 'USER' AND p.name = 'BOOKING_MANAGE'
 ON CONFLICT DO NOTHING;
 
 -- =====================================================================
 -- Verify inserted data
 -- =====================================================================
 
--- Count permissions
+-- Count all entities
 SELECT 'Permissions' as entity, COUNT(*) as count FROM auth_schema.permissions
 UNION ALL
 SELECT 'Roles', COUNT(*) FROM auth_schema.roles
 UNION ALL
 SELECT 'Users', COUNT(*) FROM auth_schema.users
 UNION ALL
-SELECT 'Role-Permissions', COUNT(*) FROM auth_schema.role_permissions
-UNION ALL
-SELECT 'User-Roles', COUNT(*) FROM auth_schema.user_roles;
+SELECT 'Role-Permissions', COUNT(*) FROM auth_schema.role_permissions;
 
--- Show admin user details
+-- Show all users with their roles and permissions
 SELECT 
     u.username,
     u.email,
     u.full_name,
     u.enabled,
-    r.name as role
+    r.name as role,
+    STRING_AGG(p.name, ', ') as permissions
 FROM auth_schema.users u
-JOIN auth_schema.user_roles ur ON u.id = ur.user_id
-JOIN auth_schema.roles r ON ur.role_id = r.id
-WHERE u.username = 'admin';
+LEFT JOIN auth_schema.roles r ON u.role_id = r.id
+LEFT JOIN auth_schema.role_permissions rp ON r.id = rp.role_id
+LEFT JOIN auth_schema.permissions p ON rp.permission_id = p.id
+GROUP BY u.username, u.email, u.full_name, u.enabled, r.name
+ORDER BY u.username;
 
 -- =====================================================================
 -- Login Information
 -- =====================================================================
--- Username: admin
--- Password: admin123
--- Email: admin@ticketflow.com
--- ⚠️  WARNING: Change default password in production!
+-- SUPER ADMIN:
+--   Username: superadmin
+--   Password: admin123
+--   Email: admin@ticketflow.com
+--
+-- TEST USER:
+--   Username: testuser
+--   Password: admin123
+--   Email: user@ticketflow.com
+--
+-- ⚠️  WARNING: Change default passwords in production!
 -- =====================================================================
