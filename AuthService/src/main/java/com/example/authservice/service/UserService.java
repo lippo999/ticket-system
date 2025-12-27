@@ -34,6 +34,12 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElse(null);
+    }
+
     @Transactional(readOnly = true)
     public UserResponse getUserById(Long id) {
         User user = userRepository.findById(id)

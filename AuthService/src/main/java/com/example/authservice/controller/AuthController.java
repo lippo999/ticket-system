@@ -1,60 +1,49 @@
 package com.example.authservice.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
+import com.example.authservice.JwtService;
+import com.example.authservice.dto.LoginRequest;
+import com.example.authservice.dto.LoginResponse;
+import com.example.authservice.entity.User;
+import com.example.authservice.service.UserService;
 
+import io.jsonwebtoken.Claims;
+import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
-    @GetMapping("/health")
-    public ResponseEntity<Map<String, Object>> health() {
-        Map<String, Object> response = new HashMap<>();
-        response.put("service", "AuthService");
-        response.put("status", "UP");
-        response.put("timestamp", LocalDateTime.now());
-        response.put("port", 8001);
-        return ResponseEntity.ok(response);
-    }
+    @Autowired
+    private final UserService userService;
+    private final JwtService jwtService;
+    private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> credentials) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Login endpoint");
-        response.put("username", credentials.get("username"));
-        response.put("token", "dummy-jwt-token-12345");
-        response.put("timestamp", LocalDateTime.now());
-        return ResponseEntity.ok(response);
-    }
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        User user = userService.getUserByUsername(request.getUsername());
+        
+        if (user == null || !passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            return ResponseEntity.status(401).body("Invalid credentials");
+        }
 
-    @PostMapping("/register")
-    public ResponseEntity<Map<String, Object>> register(@RequestBody Map<String, String> userInfo) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Register endpoint");
-        response.put("username", userInfo.get("username"));
-        response.put("email", userInfo.get("email"));
-        response.put("userId", "user-" + System.currentTimeMillis());
-        response.put("timestamp", LocalDateTime.now());
-        return ResponseEntity.ok(response);
+        String token = jwtService.generateToken(user);
+        return ResponseEntity.ok(new LoginResponse(token, user.getUsername()));
     }
 
     @GetMapping("/validate")
-    public ResponseEntity<Map<String, Object>> validateToken(@RequestHeader(value = "Authorization", required = false) String token) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Token validation endpoint");
-        response.put("token", token);
-        response.put("valid", token != null && !token.isEmpty());
-        response.put("timestamp", LocalDateTime.now());
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/test")
-    public ResponseEntity<String> test() {
-        return ResponseEntity.ok("AuthService is working! Port: 8001");
+    public ResponseEntity<?> validate(@RequestHeader("Authorization") String authHeader) {
+        try {
+            String token = authHeader.replace("Bearer ", "");
+            Claims claims = jwtService.validateTokenAndGetClaims(token);
+            return ResponseEntity.ok(claims);
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body("Invalid token");
+        }
     }
 }
 
