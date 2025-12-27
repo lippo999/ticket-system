@@ -25,7 +25,7 @@ public class UserRequest {
 
     private String fullName;
     private Boolean enabled;
-    private Set<Long> roleIds;
+    private Long roleId;
     private Set<Long> permissionIds;
 }
 
