@@ -39,7 +39,7 @@ public class Role {
 
     @JsonIgnore
     @ManyToMany(mappedBy = "roles")
-    private Set<User> users = new HashSet<>();
+    private Set<User> users;
 
     @CreationTimestamp
     @Column(updatable = false)

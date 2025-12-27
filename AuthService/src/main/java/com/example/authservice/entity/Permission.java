@@ -9,7 +9,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -31,7 +30,7 @@ public class Permission {
     
     @JsonIgnore
     @ManyToMany(mappedBy = "permissions")
-    private Set<User> users = new HashSet<>();
+    private Set<User> users;
     
     @CreationTimestamp
     @Column(updatable = false)
