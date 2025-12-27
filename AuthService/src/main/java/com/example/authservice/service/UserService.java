@@ -47,79 +47,79 @@ public class UserService {
         return UserResponse.fromEntity(user);
     }
 
-    @Transactional
-    public UserResponse createUser(UserRequest request) {
-        if (userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("Username already exists: " + request.getUsername());
-        }
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already exists: " + request.getEmail());
-        }
+    // @Transactional
+    // public UserResponse createUser(UserRequest request) {
+    //     if (userRepository.existsByUsername(request.getUsername())) {
+    //         throw new RuntimeException("Username already exists: " + request.getUsername());
+    //     }
+    //     if (userRepository.existsByEmail(request.getEmail())) {
+    //         throw new RuntimeException("Email already exists: " + request.getEmail());
+    //     }
 
-        User user = new User();
-        user.setUsername(request.getUsername());
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setFullName(request.getFullName());
-        user.setEnabled(request.getEnabled() != null ? request.getEnabled() : true);
+    //     User user = new User();
+    //     user.setUsername(request.getUsername());
+    //     user.setEmail(request.getEmail());
+    //     user.setPassword(passwordEncoder.encode(request.getPassword()));
+    //     user.setFullName(request.getFullName());
+    //     user.setEnabled(request.getEnabled() != null ? request.getEnabled() : true);
 
-        if (request.getRoleIds() != null && !request.getRoleIds().isEmpty()) {
-            Set<Role> roles = new HashSet<>(
-                roleRepository.findAllById(request.getRoleIds())
-            );
-            user.setRoles(roles);
-        }
+    //     if (request.getRoleIds() != null && !request.getRoleIds().isEmpty()) {
+    //         Set<Role> roles = new HashSet<>(
+    //             roleRepository.findAllById(request.getRoleIds())
+    //         );
+    //         user.setRoles(roles);
+    //     }
 
-        if (request.getPermissionIds() != null && !request.getPermissionIds().isEmpty()) {
-            Set<Permission> permissions = new HashSet<>(
-                permissionRepository.findAllById(request.getPermissionIds())
-            );
-            user.setPermissions(permissions);
-        }
+    //     if (request.getPermissionIds() != null && !request.getPermissionIds().isEmpty()) {
+    //         Set<Permission> permissions = new HashSet<>(
+    //             permissionRepository.findAllById(request.getPermissionIds())
+    //         );
+    //         user.setPermissions(permissions);
+    //     }
 
-        User savedUser = userRepository.save(user);
-        return UserResponse.fromEntity(savedUser);
-    }
+    //     User savedUser = userRepository.save(user);
+    //     return UserResponse.fromEntity(savedUser);
+    // }
 
-    @Transactional
-    public UserResponse updateUser(Long id, UserRequest request) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+    // @Transactional
+    // public UserResponse updateUser(Long id, UserRequest request) {
+    //     User user = userRepository.findById(id)
+    //             .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
 
-        if (!user.getUsername().equals(request.getUsername()) &&
-            userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("Username already exists: " + request.getUsername());
-        }
-        if (!user.getEmail().equals(request.getEmail()) &&
-            userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already exists: " + request.getEmail());
-        }
+    //     if (!user.getUsername().equals(request.getUsername()) &&
+    //         userRepository.existsByUsername(request.getUsername())) {
+    //         throw new RuntimeException("Username already exists: " + request.getUsername());
+    //     }
+    //     if (!user.getEmail().equals(request.getEmail()) &&
+    //         userRepository.existsByEmail(request.getEmail())) {
+    //         throw new RuntimeException("Email already exists: " + request.getEmail());
+    //     }
 
-        user.setUsername(request.getUsername());
-        user.setEmail(request.getEmail());
-        if (request.getPassword() != null && !request.getPassword().isEmpty()) {
-            user.setPassword(passwordEncoder.encode(request.getPassword()));
-        }
-        user.setFullName(request.getFullName());
-        user.setEnabled(request.getEnabled() != null ? request.getEnabled() : true);
+    //     user.setUsername(request.getUsername());
+    //     user.setEmail(request.getEmail());
+    //     if (request.getPassword() != null && !request.getPassword().isEmpty()) {
+    //         user.setPassword(passwordEncoder.encode(request.getPassword()));
+    //     }
+    //     user.setFullName(request.getFullName());
+    //     user.setEnabled(request.getEnabled() != null ? request.getEnabled() : true);
 
-        if (request.getRoleIds() != null) {
-            Set<Role> roles = new HashSet<>(
-                roleRepository.findAllById(request.getRoleIds())
-            );
-            user.setRoles(roles);
-        }
+    //     if (request.getRoleIds() != null) {
+    //         Set<Role> roles = new HashSet<>(
+    //             roleRepository.findAllById(request.getRoleIds())
+    //         );
+    //         user.setRoles(roles);
+    //     }
 
-        if (request.getPermissionIds() != null) {
-            Set<Permission> permissions = new HashSet<>(
-                permissionRepository.findAllById(request.getPermissionIds())
-            );
-            user.setPermissions(permissions);
-        }
+    //     if (request.getPermissionIds() != null) {
+    //         Set<Permission> permissions = new HashSet<>(
+    //             permissionRepository.findAllById(request.getPermissionIds())
+    //         );
+    //         user.setPermissions(permissions);
+    //     }
 
-        User updatedUser = userRepository.save(user);
-        return UserResponse.fromEntity(updatedUser);
-    }
+    //     User updatedUser = userRepository.save(user);
+    //     return UserResponse.fromEntity(updatedUser);
+    // }
 
     @Transactional
     public void deleteUser(Long id) {

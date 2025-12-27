@@ -37,21 +37,9 @@ public class User {
     @Column(nullable = false)
     private Boolean enabled = true;
     
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-        name = "user_roles",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private Set<Role> roles = new HashSet<>();
-    
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-        name = "user_permissions",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "permission_id")
-    )
-    private Set<Permission> permissions = new HashSet<>();
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id")
+    private Role role;
     
     @CreationTimestamp
     @Column(updatable = false)
@@ -59,5 +47,14 @@ public class User {
     
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+    @Transient
+    
+    public Set<Permission> getPermissions() {
+        if (role == null) {
+            return new HashSet<>();
+        }
+        return role.getPermissions();
+    }
+
 }
 

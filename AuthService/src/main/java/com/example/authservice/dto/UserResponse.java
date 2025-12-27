@@ -19,7 +19,7 @@ public class UserResponse {
     private String email;
     private String fullName;
     private Boolean enabled;
-    private Set<RoleResponse> roles;
+    private String role;
     private Set<PermissionResponse> permissions;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -31,21 +31,14 @@ public class UserResponse {
         response.setEmail(user.getEmail());
         response.setFullName(user.getFullName());
         response.setEnabled(user.getEnabled());
-        if (user.getRoles() != null) {
-            response.setRoles(
-                user.getRoles().stream()
-                    .map(RoleResponse::fromEntity)
-                    .collect(Collectors.toSet())
-            );
-        }
+        response.setRole(
+                user.getRole().getName());
         response.setPermissions(
-            user.getPermissions().stream()
-                .map(PermissionResponse::fromEntity)
-                .collect(Collectors.toSet())
-        );
+                user.getPermissions().stream()
+                        .map(PermissionResponse::fromEntity)
+                        .collect(Collectors.toSet()));
         response.setCreatedAt(user.getCreatedAt());
         response.setUpdatedAt(user.getUpdatedAt());
         return response;
     }
 }
-

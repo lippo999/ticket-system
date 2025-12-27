@@ -9,7 +9,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @Entity
 @Table(name = "permissions")
@@ -27,10 +26,6 @@ public class Permission {
     
     @Column(length = 255)
     private String description;
-    
-    @JsonIgnore
-    @ManyToMany(mappedBy = "permissions")
-    private Set<User> users;
     
     @CreationTimestamp
     @Column(updatable = false)

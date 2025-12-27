@@ -14,9 +14,8 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // disable for simple health GET
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/api/users/**", "/api/permissions/**", "/api/roles/**").permitAll()
-                        .anyRequest().authenticated()
-                )
+                        .requestMatchers("/api/auth/login", "/api/auth/validate").permitAll()
+                        .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults());
 
         return http.build();

@@ -37,10 +37,6 @@ public class Role {
     )
     private Set<Permission> permissions = new HashSet<>();
 
-    @JsonIgnore
-    @ManyToMany(mappedBy = "roles")
-    private Set<User> users;
-
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;
