@@ -52,3 +52,23 @@
 **/*.zip
 **/*.tar.gz
 **/*.rar
+
+# Application properties
+**/application.properties
+**/application.yml
+**/application-*.properties
+**/application-*.yml
+
+# Sensitive files
+**/*.env
+**/*.key
+**/*.pem
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Build
+**/target/
+**/build/
