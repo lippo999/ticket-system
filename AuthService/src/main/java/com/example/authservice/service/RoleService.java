@@ -30,10 +30,16 @@ public class RoleService {
     }
 
     @Transactional(readOnly = true)
-    public Role getRoleById(Long id) {
+    public RoleResponse getRoleByIdResponse(Long id) {
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Role not found with id: " + id));
-        return role;
+        return RoleResponse.fromEntity(role);
+    }
+
+    @Transactional(readOnly = true)
+    public Role getRoleById(Long id) {
+        return roleRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Role not found with id: " + id));
     }
 
     @Transactional
