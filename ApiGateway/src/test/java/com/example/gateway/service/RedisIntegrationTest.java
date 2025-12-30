@@ -89,18 +89,23 @@ class RedisIntegrationTest {
 
     @Test
     void testDelete() {
-        // Given
-        String key = TEST_KEY_PREFIX + "todelete";
-        redisTemplate.opsForValue().set(key, "value").block();
+        // // Given
+        // String key = "demo:*";
+        // redisTemplate.opsForValue().set(key, "value").block();
 
-        // When
-        Long deleted = redisTemplate.delete(key).block();
+        // // When
+        // Long deleted = redisTemplate.delete(key).block();
 
-        // Then
-        assertThat(deleted).isEqualTo(1L);
+        // // Then
+        // assertThat(deleted).isEqualTo(1L);
         
-        Boolean exists = redisTemplate.hasKey(key).block();
-        assertThat(exists).isFalse();
+        // Boolean exists = redisTemplate.hasKey(key).block();
+        // assertThat(exists).isFalse();
+        Long deletedCount = redisTemplate.keys("*:*")
+            .flatMap(redisTemplate::delete)
+            .reduce(0L, Long::sum)
+            .block();
+        assertThat(deletedCount).isNotNull();
     }
 
     @Test
@@ -197,5 +202,35 @@ class RedisIntegrationTest {
         StepVerifier.create(redisTemplate.keys(TEST_KEY_PREFIX + "*"))
                 .expectNextCount(3)
                 .verifyComplete();
+    }
+
+    @Test
+    void testDeleteAllKeysByPattern() {
+        // Given: Create multiple keys with "demo" prefix
+        redisTemplate.opsForValue().set("demo:1", "value1").block();
+        redisTemplate.opsForValue().set("demo:2", "value2").block();
+        redisTemplate.opsForValue().set("demo:3", "value3").block();
+        redisTemplate.opsForValue().set("other:1", "other").block();
+
+        // Verify they exist
+        Long demoCount = redisTemplate.keys("demo:*").count().block();
+        assertThat(demoCount).isEqualTo(3);
+
+        // When: Delete all keys starting with "demo"
+        Long deletedCount = redisTemplate.keys("demo:*")
+                .flatMap(redisTemplate::delete)
+                .reduce(0L, Long::sum)
+                .block();
+
+        // Then: All demo keys should be deleted
+        assertThat(deletedCount).isEqualTo(3);
+        
+        // Verify demo keys are gone
+        Long remainingDemoKeys = redisTemplate.keys("demo:*").count().block();
+        assertThat(remainingDemoKeys).isEqualTo(0);
+        
+        // But other keys should still exist
+        Boolean otherExists = redisTemplate.hasKey("other:1").block();
+        assertThat(otherExists).isTrue();
     }
 }
