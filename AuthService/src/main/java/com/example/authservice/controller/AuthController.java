@@ -1,6 +1,7 @@
 package com.example.authservice.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
-
     @Autowired
     private final UserService userService;
     private final JwtService jwtService;
@@ -35,15 +35,12 @@ public class AuthController {
         return ResponseEntity.ok(new LoginResponse(token, user.getUsername()));
     }
 
-    @GetMapping("/validate")
-    public ResponseEntity<?> validate(@RequestHeader("Authorization") String authHeader) {
-        try {
-            String token = authHeader.replace("Bearer ", "");
-            Claims claims = jwtService.validateTokenAndGetClaims(token);
-            return ResponseEntity.ok(claims);
-        } catch (Exception e) {
-            return ResponseEntity.status(401).body("Invalid token");
-        }
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.replace("Bearer ", "");
+        String jti = jwtService.getJTIFromToken(token);
+        jwtService.addToBlacklist(jti);
+        return ResponseEntity.ok("Logged out successfully");
     }
 }
 
