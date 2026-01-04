@@ -5,8 +5,16 @@ spring:
     gateway:
       discovery:
         locator:
-          enabled: true
-          lower-case-service-id: true
+          enabled: true # Enable auto discovery từ Eureka
+          lower-case-service-id: true # Service name sẽ là lowercase
+
+# SpringDoc Configuration
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+  api-docs:
+    enabled: true
 
 server:
   port: 8080

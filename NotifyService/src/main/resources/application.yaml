@@ -23,6 +23,14 @@ spring:
 server:
   port: 8084
 
+# SpringDoc Configuration
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: false  # Disable local Swagger UI, chỉ dùng centralized tại Gateway
+
 eureka:
   client:
     serviceUrl:
