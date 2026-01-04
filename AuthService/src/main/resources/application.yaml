@@ -2,7 +2,7 @@ spring:
   application:
     name: auth-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/ticket_system
+    url: jdbc:postgresql://localhost:5432/ticket
     username: auth_user
     password: auth_password_123
     driver-class-name: org.postgresql.Driver
