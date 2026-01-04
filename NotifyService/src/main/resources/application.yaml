@@ -4,7 +4,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/ticket_system
     username: notify_user
-    password: notify_pass
+    password: notify_password_123
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:

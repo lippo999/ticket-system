@@ -4,7 +4,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/ticket_system
     username: auth_user
-    password: auth_pass
+    password: auth_password_123
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -33,5 +33,42 @@ eureka:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
 
 jwt:
-  secret: your-secret-key-here-make-it-long-and-secure-at-least-256-bits
   expiration: 86400000
+  private-key: |
+    -----BEGIN RSA PRIVATE KEY-----
+    MIIEpAIBAAKCAQEAuxWhnZ7PWtqzOk9LAbqY2C98dDprGcKYEgK3Fx4U+YPtcvl8
+    jiSFtMbYkw4Sx040f+sfxzlmCaeh9F97Gn4dYmv4gHHeOsyOVZFVwtn2My95d1Ja
+    WJcamhFEL0U1VyN2o9w2pADZL4kZM1Hf1UqDBzAXJAhsh6rr1JqXOaVqV0Af2rDk
+    3sQ/LvJ7XoRZA7yy0Jj3q4or2Kc5GtMK5zlEGS7C4qwJq1d8wsYb1ZseSQx99vxY
+    +3zWu4P2p4RpvLUpmBoDh8FpgElyl45Oiie7wBhrp7ocEpNdITU6EmDIgrOtb/4C
+    OF0YfXNodeqLLdI4nAnx3f6g38LtrdIZF1IpXQIDAQABAoIBAQCUDBwm9YO1rBfk
+    7ta2eYl2mq1r9MbITdu1dPyaiK2kfqgrMg9FFNXSJwE/7gUiP1sAV3qAV4XN4iAh
+    mGV8o4xxVGwEiReJhFKmmCo71ewkuU7wA/WG4Zyli0Bf/+6kFGZQaXW79wfnvCB7
+    IjF1Qk/KIl5Nn3TzL2kMh4Fgluw+OiAZjsk53fGDM21fkJut7dTVN/+4RvpjSmGB
+    kwKnV/z0pgXE5jprzsVIYoINxQyE9BfzjzVFNabfLH99CApwCXHpeGtJayQQYCi6
+    882HGPIbkCUoBFRVqFts8CM5XyKKWN5uUgDmPRCs5o1gYGA5dse4viT0hnyB/5eG
+    j855qrGBAoGBANy50kcUQg5h5HKmBcY4w7/VXJZHIvQmXyDBuJe1s6JUnOnkSGFR
+    E4GJ+Xe+ebG+18BiECG+uG82UnWBBcMJo7RuCGdmQ4kLLVqovEykpXcZa3sqi/GC
+    fce8F2aPlNJZcpR/s6Pbn4CDgfl93Vx2SZj0O+4GTWO5zxqQ2lISj9BtAoGBANj7
+    f5TLSuYNQAZbNe0udWVyNp7G8hGlpCafqxk8HKNQjgtyXqVU3AeqSwFDpkFMh8hG
+    c5dcx1iPQaR8YGy1ekXP35K0GppbNB4J1BaODqWngOo/tS3IAf3Rf1MkpG7feymq
+    mXMznNAcV5nhJhtyZwq7v2A0ebi1TvLmwJDrsoaxAoGBALmmCXkDTvPt3kmX3m90
+    uyAUgwVa28lipMxWY74mc+prJHeNLFu955wiwpK2wICBtdH4KP1Y/qN7myt906zR
+    5METczoUx2Ty47jHB2mnagyccsxrYr1FNinSyBPZXCD4XukL57pANQ3QjnecJ51n
+    WEuv0OBIqLriQ5FimF5DgnaZAoGAc09UQbK3nwIzoC0gv2cNJFhKBp8bTZ2FWrFH
+    sCVt4qyQkCy7d4ldVQV+zrEwzUrqbdhi3XGEzt9ytwMSCzN2Q1txKPllmdoWHFCE
+    0We1CPu3WsV4d1fvFwAadgjnCbTiMwZifgJTt5UYSMKKCdQGRoH39hxtA2f3CMbw
+    VxOq0EECgYB+sPgWSzTbG4jWhXEZ/BXzJAkfvFtqMP3sq7hzdcgFlsFUudpWKKUm
+    En5ukc1XtW0hmF/JKdTFDvAfG3RnuGy0O95bNpqAU+fwnsTi99AQpfNoyMOU2XFc
+    PtgkKoFTaen35+OEz/cJ4q0/9r1H+1v7OCanfA/C/8clU21KScCJfQ==
+    -----END RSA PRIVATE KEY-----
+  public-key: |
+    -----BEGIN PUBLIC KEY-----
+    MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuxWhnZ7PWtqzOk9LAbqY
+    2C98dDprGcKYEgK3Fx4U+YPtcvl8jiSFtMbYkw4Sx040f+sfxzlmCaeh9F97Gn4d
+    Ymv4gHHeOsyOVZFVwtn2My95d1JaWJcamhFEL0U1VyN2o9w2pADZL4kZM1Hf1UqD
+    BzAXJAhsh6rr1JqXOaVqV0Af2rDk3sQ/LvJ7XoRZA7yy0Jj3q4or2Kc5GtMK5zlE
+    GS7C4qwJq1d8wsYb1ZseSQx99vxY+3zWu4P2p4RpvLUpmBoDh8FpgElyl45Oiie7
+    wBhrp7ocEpNdITU6EmDIgrOtb/4COF0YfXNodeqLLdI4nAnx3f6g38LtrdIZF1Ip
+    XQIDAQAB
+    -----END PUBLIC KEY-----

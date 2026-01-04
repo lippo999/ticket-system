@@ -4,7 +4,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/ticket_system
     username: payment_user
-    password: payment_pass
+    password: payment_password_123
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
