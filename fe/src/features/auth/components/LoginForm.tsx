@@ -31,17 +31,17 @@ export function LoginForm() {
 
       <form action={formAction} className="space-y-4">
         <div className="space-y-2">
-          <label className="text-sm font-medium text-zinc-800 dark:text-zinc-200" htmlFor="email">
-            Email
+          <label className="text-sm font-medium text-zinc-800 dark:text-zinc-200" htmlFor="username">
+            Username
           </label>
           <input
-            id="email"
-            name="email"
-            type="email"
-            autoComplete="email"
+            id="username"
+            name="username"
+            type="text"
+            autoComplete="username"
             required
             className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:focus:border-blue-400 dark:focus:ring-blue-900/40"
-            placeholder="you@example.com"
+            placeholder="your-username"
           />
         </div>
 
