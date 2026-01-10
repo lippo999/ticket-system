@@ -72,3 +72,17 @@
 # Build
 **/target/
 **/build/
+
+# Node / Next.js (FE)
+**/node_modules/
+**/.next/
+**/.turbo/
+**/.vercel/
+**/.swc/
+**/out/
+**/build/
+**/coverage/
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+**/pnpm-debug.log*
