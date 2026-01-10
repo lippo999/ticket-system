@@ -5,10 +5,8 @@ spring:
     gateway:
       discovery:
         locator:
-          enabled: true # Enable auto discovery từ Eureka
-          lower-case-service-id: true # Service name sẽ là lowercase
+          enabled: false  # Disabled auto-discovery, using manual routes
 
-# SpringDoc Configuration
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
@@ -28,3 +26,8 @@ eureka:
   instance:
     prefer-ip-address: true
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+
+logging:
+  level:
+    org.springframework.cloud.gateway: TRACE
+    org.springframework.cloud.gateway.handler.predicate: DEBUG

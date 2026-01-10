@@ -1,24 +1,45 @@
 package com.example.gateway.config;
 
+import org.springframework.cloud.gateway.route.RouteLocator;
+import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * RouteConfig - Cấu hình routes động từ Eureka
- * 
- * Với discovery.locator.enabled=true, API Gateway sẽ tự động tạo routes cho tất cả services
- * đăng ký trên Eureka với pattern: /{service-name}/**
- * 
- * Ví dụ:
- * - /auth-service/** -> lb://auth-service
- * - /booking-service/** -> lb://booking-service
- * - /event-service/** -> lb://event-service
- * - /notify-service/** -> lb://notify-service
- * - /payment-service/** -> lb://payment-service
- * 
- * Nếu cần custom routes hoặc filters, có thể thêm @Bean RouteLocator ở đây.
+ * RouteConfig - Manual route configuration
+ * Routes are explicitly defined instead of auto-discovery from Eureka
  */
 @Configuration
 public class RouteConfig {
-    // Routes được tạo tự động từ Eureka Discovery
-    // Không cần hardcode nữa!
+    
+    @Bean
+    public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
+        return builder.routes()
+            // Auth Service - /api/auth/** -> lb://AUTHSERVICE/api/auth/**
+            .route("authservice", r -> r
+                .path("/api/auth/**")
+                .uri("lb://AUTHSERVICE"))
+            
+            // Booking Service
+            .route("bookingservice", r -> r
+                .path("/api/bookings/**")
+                .uri("lb://BOOKINGSERVICE"))
+            
+            // Event Service
+            .route("eventservice", r -> r
+                .path("/api/events/**")
+                .uri("lb://EVENTSERVICE"))
+            
+            // Notification Service
+            .route("notifyservice", r -> r
+                .path("/api/notifications/**")
+                .uri("lb://NOTIFYSERVICE"))
+            
+            // Payment Service
+            .route("paymentservice", r -> r
+                .path("/api/payments/**")
+                .uri("lb://PAYMENTSERVICE"))
+            
+            .build();
+    }
 }
