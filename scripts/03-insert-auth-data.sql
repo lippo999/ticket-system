@@ -37,11 +37,11 @@ ON CONFLICT (name) DO NOTHING;
 -- Generate tại: https://bcrypt-generator.com/
 INSERT INTO auth_schema.users (username, email, password, full_name, role_id, enabled, created_at, updated_at)
 VALUES
-    ('superadmin', 'admin@ticketflow.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Super Administrator', 
+    ('admin', 'admin@ticketflow.com', '$2a$12$18X75fuWIxItrkFzC9JV4e4H8If6uYyjeXcAAXca2f9.MFpVL5cse', 'Super Administrator', 
      (SELECT id FROM auth_schema.roles WHERE name = 'SUPER_ADMIN'), 
      true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
     
-    ('testuser', 'user@ticketflow.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Test User', 
+    ('testuser', 'user@ticketflow.com', '$2a$12$18X75fuWIxItrkFzC9JV4e4H8If6uYyjeXcAAXca2f9.MFpVL5cse', 'Test User', 
      (SELECT id FROM auth_schema.roles WHERE name = 'USER'), 
      true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ON CONFLICT (username) DO NOTHING;
