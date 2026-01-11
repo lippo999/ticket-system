@@ -18,7 +18,7 @@ public class RouteConfig {
             // Auth Service - /api/auth/** -> lb://AUTHSERVICE/api/auth/**
             .route("authservice", r -> r
                 .path("/api/auth/**")
-                .uri("lb://AUTHSERVICE"))
+                .uri("lb://AUTH-SERVICE"))
             
             // Booking Service
             .route("bookingservice", r -> r

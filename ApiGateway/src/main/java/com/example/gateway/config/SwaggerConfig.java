@@ -1,6 +1,8 @@
 package com.example.gateway.config;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springdoc.core.properties.AbstractSwaggerUiConfigProperties;
 import org.springdoc.core.properties.SwaggerUiConfigProperties;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
@@ -8,7 +10,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.servers.Server;
+
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -42,5 +48,14 @@ public class SwaggerConfig {
 
         properties.setUrls(urls);
         return properties;
+    }
+
+    @Bean
+    @Primary
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI()
+                .addServersItem(new Server()
+                        .url("http://localhost:8080")
+                        .description("API Gateway"));
     }
 }
